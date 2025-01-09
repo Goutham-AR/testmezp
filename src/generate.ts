@@ -6,6 +6,7 @@ export interface ReqBody {
   testFramework: string;
 }
 export const generateTest = async (backendUrl: string, body: ReqBody) => {
+  return "hello";
   const path = `${backendUrl}/generate`;
   const response = await axios.post(
     path,
