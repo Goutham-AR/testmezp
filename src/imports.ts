@@ -7,7 +7,7 @@ export const getImports = (filepath: string, filecontent: string) => {
     plugins: ["typescript", "jsx"],
   });
   const imports: string[] = [];
-  ast.program.body.forEach((node) => {
+  ast.program.body.forEach((node: any) => {
     if (node.type === "ImportDeclaration") {
       imports.push(node.source.value);
     }

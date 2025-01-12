@@ -5,6 +5,13 @@ export interface ReqBody {
   extension: string;
   testFramework: string;
 }
+export interface Import {
+  path: string;
+  code: string;
+}
+export interface ReqBodyV2 extends ReqBody {
+  imports: Import[];
+}
 export const generateTest = async (backendUrl: string, body: ReqBody) => {
   return "hello";
   const path = `${backendUrl}/generate`;
@@ -18,4 +25,43 @@ export const generateTest = async (backendUrl: string, body: ReqBody) => {
     { headers: { "Content-Type": "application/json" } },
   );
   return response.data;
+};
+
+export const generateTestV2 = async (backendUrl: string, body: ReqBodyV2) => {
+  const path = `${backendUrl}/generate/v2`;
+  const response = await axios({
+    method: "POST",
+    url: path,
+    responseType: "stream",
+    data: body,
+  });
+  return response;
+};
+
+export const generateTestWithStreaming = async (
+  backendUrl: string,
+  body: ReqBody,
+) => {
+  const path = `${backendUrl}/streaming_test`;
+  const response = await axios({
+    method: "POST",
+    url: path,
+    responseType: "stream",
+    data: body,
+  });
+  return response;
+};
+
+export const generateForSelection = async (
+  backendUrl: string,
+  body: ReqBodyV2,
+) => {
+  const path = `${backendUrl}/generate/selection`;
+  const response = await axios({
+    method: "POST",
+    url: path,
+    responseType: "stream",
+    data: body,
+  });
+  return response;
 };

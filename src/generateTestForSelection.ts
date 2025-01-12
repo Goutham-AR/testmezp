@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
-import { getFileExtension } from "./utils";
-import { generateTest, ReqBody } from "./generate";
-import { convertExtensionToLanguage } from "./constants";
+import { getFileExtension, writeStreamingOutput } from "./utils";
+import { generateForSelection, ReqBodyV2 } from "./generate";
 import { BACKEND_URL } from "./config";
+import { AxiosResponse } from "axios";
 
 export const generateTestForSelection = async () => {
   const editor = vscode.window.activeTextEditor;
@@ -17,21 +17,18 @@ export const generateTestForSelection = async () => {
   }
   const filepath = editor.document.fileName;
   const fileExtension = getFileExtension(filepath);
-  const body: ReqBody = {
+  const body: ReqBodyV2 = {
     code: selectionText,
     extension: fileExtension as string,
     testFramework: "jest",
+    imports: [],
   };
-  let response: string;
+  let response: AxiosResponse;
   try {
-    response = await generateTest(BACKEND_URL, body);
+    response = await generateForSelection(BACKEND_URL, body);
   } catch (e) {
     vscode.window.showErrorMessage("Server error, please try again....");
     return;
   }
-  const doc = await vscode.workspace.openTextDocument({
-    content: response,
-    language: convertExtensionToLanguage(fileExtension as string),
-  });
-  vscode.window.showTextDocument(doc);
+  await writeStreamingOutput(response, fileExtension as string);
 };
