@@ -6,9 +6,14 @@ import {
   writeStreamingOutput,
 } from "./utils";
 import { generateTestWithSample, Import, ReqBodyV3 } from "./generate";
-import { BACKEND_URL } from "./config";
+import { getBackendUrl } from "./config";
 
 export const generateTestForFileWithSample = async () => {
+  const backendUrl = getBackendUrl();
+  if (!backendUrl) {
+    vscode.window.showErrorMessage("Please set apiUrl in settings");
+    return;
+  }
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     vscode.window.showErrorMessage("No active editor!");
@@ -56,7 +61,7 @@ export const generateTestForFileWithSample = async () => {
     sampleTest: sampleContent,
   };
   try {
-    const response = await generateTestWithSample(BACKEND_URL, reqBody);
+    const response = await generateTestWithSample(backendUrl, reqBody);
     await writeStreamingOutput(response, extension);
   } catch (e) {
     vscode.window.showErrorMessage(`server error: ${e}. please try again.`);

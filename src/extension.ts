@@ -6,7 +6,6 @@ import { generateTestForFileWithSample } from "./generateTestForFileWithSample";
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "testmezp" is now active!');
-
   const d1 = vscode.commands.registerCommand(
     "testmezp.generateTestForFile",
     generateTestForFileV2,

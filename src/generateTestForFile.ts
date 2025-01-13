@@ -13,9 +13,14 @@ import {
   ReqBody,
   ReqBodyV2,
 } from "./generate";
-import { BACKEND_URL } from "./config";
+import { getBackendUrl } from "./config";
 
 export const generateTestForFile = async () => {
+  const backendUrl = getBackendUrl();
+  if (!backendUrl) {
+    vscode.window.showErrorMessage("Please set apiUrl in settings");
+    return;
+  }
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     vscode.window.showErrorMessage("No active editor!");
@@ -35,7 +40,7 @@ export const generateTestForFile = async () => {
       extension: fileExtension as string,
       testFramework: "jest",
     };
-    const testOutput = await generateTest(BACKEND_URL, body);
+    const testOutput = await generateTest(backendUrl, body);
     outputContent = testOutput.data as string;
   } catch (e) {
     console.error(e);
@@ -54,6 +59,11 @@ export const generateTestForFile = async () => {
 };
 
 export const generateTestForFileV2 = async () => {
+  const backendUrl = getBackendUrl();
+  if (!backendUrl) {
+    vscode.window.showErrorMessage("Please set apiUrl in settings");
+    return;
+  }
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     vscode.window.showErrorMessage("No active editor!");
@@ -85,7 +95,7 @@ export const generateTestForFileV2 = async () => {
     imports,
   };
   try {
-    const response = await generateTestV2(BACKEND_URL, reqBody);
+    const response = await generateTestV2(backendUrl, reqBody);
     await writeStreamingOutput(response, extension);
   } catch (e) {
     vscode.window.showErrorMessage(`server error: ${e}. please try again.`);

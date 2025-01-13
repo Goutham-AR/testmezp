@@ -23,7 +23,17 @@
         "command": "testmezp.generateTestForSelectionWithSample",
         "title": "Testme: Generate tests for selection with sample"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Testme",
+      "properties": {
+        "testme.apiUrl": {
+          "type": ["string", null],
+          "default": null,
+          "description": "Backend url"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "pnpm run compile",

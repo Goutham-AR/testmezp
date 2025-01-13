@@ -1,1 +1,6 @@
-export const BACKEND_URL = "http://80.188.223.202:18346";
+import * as vscode from "vscode";
+
+export const getBackendUrl = () => {
+  const config = vscode.workspace.getConfiguration("testme");
+  return config.get<string>("apiUrl");
+};
