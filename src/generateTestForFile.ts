@@ -77,6 +77,7 @@ export const generateTestForFileV2 = async () => {
     path: def.path,
     code: def.locations[0].text,
   }));
+
   const reqBody: ReqBodyV2 = {
     extension,
     code: sourceCode,

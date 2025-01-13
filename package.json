@@ -6,9 +6,7 @@
   "engines": {
     "vscode": "^1.96.0"
   },
-  "categories": [
-    "Other"
-  ],
+  "categories": ["Other"],
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
@@ -20,6 +18,10 @@
       {
         "command": "testmezp.generateTestForSelection",
         "title": "Testme: Generate tests for selection"
+      },
+      {
+        "command": "testmezp.generateTestForSelectionWithSample",
+        "title": "Testme: Generate tests for selection with sample"
       }
     ]
   },

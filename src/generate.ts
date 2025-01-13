@@ -12,6 +12,9 @@ export interface Import {
 export interface ReqBodyV2 extends ReqBody {
   imports: Import[];
 }
+export interface ReqBodyV3 extends ReqBodyV2 {
+  sampleTest: string;
+}
 export const generateTest = async (backendUrl: string, body: ReqBody) => {
   return "hello";
   const path = `${backendUrl}/generate`;
@@ -57,6 +60,20 @@ export const generateForSelection = async (
   body: ReqBodyV2,
 ) => {
   const path = `${backendUrl}/generate/selection`;
+  const response = await axios({
+    method: "POST",
+    url: path,
+    responseType: "stream",
+    data: body,
+  });
+  return response;
+};
+
+export const generateTestWithSample = async (
+  backendUrl: string,
+  body: ReqBodyV3,
+) => {
+  const path = `${backendUrl}/generate/v3`;
   const response = await axios({
     method: "POST",
     url: path,
