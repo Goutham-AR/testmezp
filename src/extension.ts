@@ -1,9 +1,6 @@
 import * as vscode from "vscode";
 
-import {
-  generateTestForFile,
-  generateTestForFileV2,
-} from "./generateTestForFile";
+import { generateTestForFileV2 } from "./generateTestForFile";
 import { generateTestForSelection } from "./generateTestForSelection";
 
 export function activate(context: vscode.ExtensionContext) {
