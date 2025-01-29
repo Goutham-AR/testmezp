@@ -24,6 +24,7 @@ export const generateTestForSelection = async () => {
   const fileExtension = getFileExtension(filepath);
   const body: ReqBodyV2 = {
     code: selectionText,
+    framework: "expressjs",
     extension: fileExtension as string,
     testFramework: "jest",
     imports: [],

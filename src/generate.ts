@@ -1,4 +1,5 @@
 import axios from "axios";
+import OpenAI from "openai";
 
 export interface ReqBody {
   code: string;
@@ -10,42 +11,33 @@ export interface Import {
   code: string;
 }
 export interface ReqBodyV2 extends ReqBody {
+  framework: string;
   imports: Import[];
 }
 export interface ReqBodyV3 extends ReqBodyV2 {
   sampleTest: string;
 }
-export const generateTest = async (backendUrl: string, body: ReqBody) => {
-  return "hello";
-  const path = `${backendUrl}/generate`;
-  const response = await axios.post(
-    path,
-    {
-      code: body.code,
-      extension: body.extension,
-      test_framework: body.testFramework,
-    },
-    { headers: { "Content-Type": "application/json" } },
-  );
-  return response.data;
-};
 
-export const generateTestV2 = async (backendUrl: string, body: ReqBodyV2) => {
-  const path = `${backendUrl}/generate/v2`;
-  const response = await axios({
-    method: "POST",
-    url: path,
-    responseType: "stream",
-    data: body,
+export const generateV3 = async (
+  modelName: string,
+  backendUrl: string,
+  prompt: string,
+  stream: boolean,
+) => {
+  const openai = new OpenAI({
+    baseURL: backendUrl,
+    apiKey: "key",
+  });
+  const response = await openai.chat.completions.create({
+    model: modelName,
+    messages: [{ role: "user", content: prompt }],
+    stream,
   });
   return response;
 };
 
-export const generateTestWithStreaming = async (
-  backendUrl: string,
-  body: ReqBody,
-) => {
-  const path = `${backendUrl}/streaming_test`;
+export const generateTestV2 = async (backendUrl: string, body: ReqBodyV2) => {
+  const path = `${backendUrl}/generate/v2`;
   const response = await axios({
     method: "POST",
     url: path,

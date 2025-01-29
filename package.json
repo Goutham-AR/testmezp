@@ -6,7 +6,9 @@
   "engines": {
     "vscode": "^1.96.0"
   },
-  "categories": ["Other"],
+  "categories": [
+    "Other"
+  ],
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
@@ -20,17 +22,32 @@
         "title": "Testme: Generate tests for selection"
       },
       {
-        "command": "testmezp.generateTestForSelectionWithSample",
-        "title": "Testme: Generate tests for selection with sample"
+        "command": "testmezp.generateTestWithSample",
+        "title": "Testme: Generate tests for with sample"
+      },
+      {
+        "command": "testmezp.generateTestV3",
+        "title": "Testme: Generate tests V3"
       }
     ],
     "configuration": {
       "title": "Testme",
       "properties": {
         "testme.apiUrl": {
-          "type": ["string", null],
+          "type": [
+            "string",
+            null
+          ],
           "default": null,
           "description": "Backend url"
+        },
+        "testme.modelName": {
+          "type": [
+            "string",
+            null
+          ],
+          "default": null,
+          "description": "Model name"
         }
       }
     }
@@ -56,6 +73,10 @@
   },
   "dependencies": {
     "@babel/parser": "^7.26.3",
-    "axios": "^1.7.9"
+    "@types/mustache": "^4.2.5",
+    "axios": "^1.7.9",
+    "mustache": "^4.2.0",
+    "openai": "^4.78.1",
+    "testme_core": "^0.0.3"
   }
 }

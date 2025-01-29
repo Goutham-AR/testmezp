@@ -3,6 +3,7 @@ const extensionToLanguageMapper: Record<string, string> = {
   js: "javascript",
   tsx: "typescript",
   jsx: "javascript",
+  py: "python",
 };
 
 export const convertExtensionToLanguage = (extension: string) => {
@@ -11,4 +12,14 @@ export const convertExtensionToLanguage = (extension: string) => {
     return "plaintext";
   }
   return language;
+};
+
+export const extensionToTestFramework = (extension: string) => {
+  if (["tsx", "ts", "jsx", "js"].includes(extension)) {
+    return "jest";
+  } else if (extension === "py") {
+    return "pytest";
+  } else {
+    return "";
+  }
 };

@@ -55,6 +55,7 @@ export const generateTestForFileWithSample = async () => {
   }
   const reqBody: ReqBodyV3 = {
     extension,
+    framework: "expressjs",
     code: sourceCode,
     testFramework: "jest",
     imports,

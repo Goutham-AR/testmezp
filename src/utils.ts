@@ -1,6 +1,9 @@
 import * as vscode from "vscode";
 import { AxiosResponse } from "axios";
 import { convertExtensionToLanguage } from "./constants";
+import { Stream } from "openai/src/streaming.js";
+import { ChatCompletion } from "openai/src/resources/index.js";
+import { Import } from "./generate";
 
 export const sleep = async (ms: number) => {
   return new Promise<void>((resolve, _) => setTimeout(() => resolve(), ms));
@@ -186,4 +189,61 @@ export const getDefinitionsOfImportSymbols = async (
     }),
   );
   return definitions;
+};
+
+export const writeOpenAIStreaming = async (stream: any, extension: string) => {
+  const document = await vscode.workspace.openTextDocument({
+    content: "",
+    language: convertExtensionToLanguage(extension),
+  });
+
+  const editor = await vscode.window.showTextDocument(document, {
+    preview: false,
+    viewColumn: vscode.ViewColumn.Beside,
+  });
+
+  let currentText = "";
+
+  for await (const part of stream) {
+    console.log(part);
+    const text = part.choices[0]?.delta?.content ?? "";
+    if (
+      text.includes("```") ||
+      text.includes("<|im_end|>") ||
+      text.includes(extension) ||
+      text.includes(convertExtensionToLanguage(extension))
+    ) {
+      return;
+    }
+    currentText += text;
+    await editor.edit((editorBuilder) => {
+      editorBuilder.replace(
+        new vscode.Range(
+          document.positionAt(0),
+          document.positionAt(document.getText().length),
+        ),
+        currentText,
+      );
+    });
+
+    const lastLine = document.lineCount - 1;
+    editor.revealRange(
+      new vscode.Range(
+        new vscode.Position(lastLine, 0),
+        new vscode.Position(lastLine, 0),
+      ),
+    );
+    // await sleep(2000);
+  }
+};
+
+export const removeDuplicates = (arr: Import[]) => {
+  const map = new Map<string, Import>();
+  arr.forEach((elem) => {
+    const doesExist = map.get(elem.path);
+    if (!doesExist) {
+      map.set(elem.path, elem);
+    }
+  });
+  return [...map.values()];
 };
