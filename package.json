@@ -2,7 +2,7 @@
   "name": "testmezp",
   "displayName": "testme",
   "description": "generate tests",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -70,10 +70,7 @@
   "dependencies": {
     "@babel/parser": "^7.26.3",
     "@types/mustache": "^4.2.5",
-    "@vscode/vsce": "^3.2.2",
-    "axios": "^1.7.9",
     "mustache": "^4.2.0",
-    "ollama": "^0.5.13",
-    "testme_core": "^0.0.3"
+    "ollama": "^0.5.13"
   }
 }

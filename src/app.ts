@@ -4,8 +4,7 @@ import fs from "fs";
 import { AbortableAsyncIterator, ChatResponse, Ollama } from "ollama";
 import { CONFIG_NAMES, getConfig } from "./config";
 import { AppError, ConfigError } from "./errors";
-import { findImportSymbols, getDefinitionsOfImportSymbols } from "./utils";
-import { Import } from "./generate";
+import { findImportSymbols, getDefinitionsOfImportSymbols, Import } from "./utils";
 import {
   GeneratePromptData,
   loadGeneratePrompt,
@@ -80,7 +79,6 @@ export class App {
       projectInfoFileName: "package.json",
     };
     const prompt = loadGeneratePrompt(promptData);
-    console.log(prompt);
     const response = await this._sendPromptStreaming(prompt);
     await this._writeStreamingOutput(response, language);
     //for await (const chunk of response) {
