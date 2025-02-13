@@ -1,77 +1,18 @@
 import * as vscode from "vscode";
-import { AxiosResponse } from "axios";
-import { convertExtensionToLanguage } from "./constants";
-import { Stream } from "openai/src/streaming.js";
-import { ChatCompletion } from "openai/src/resources/index.js";
-import { Import } from "./generate";
 
 export const sleep = async (ms: number) => {
   return new Promise<void>((resolve, _) => setTimeout(() => resolve(), ms));
-};
-
-export const getFileExtension = (filepath: string) => {
-  // TODO: does not support windows paths
-  return filepath.split("/").pop()?.split(".").pop();
-};
-
-export const writeStreamingOutput = async (
-  response: AxiosResponse,
-  extension: string,
-) => {
-  const document = await vscode.workspace.openTextDocument({
-    content: "",
-    language: convertExtensionToLanguage(extension),
-  });
-
-  const editor = await vscode.window.showTextDocument(document, {
-    preview: false,
-    viewColumn: vscode.ViewColumn.Beside,
-  });
-
-  let currentText = "";
-
-  response.data.on("data", async (chunk: Buffer) => {
-    const text = chunk.toString("utf-8");
-    if (
-      text.includes("```") ||
-      text.includes("<|im_end|>") ||
-      text.includes(extension)
-    )
-      return;
-    currentText += text;
-    await editor.edit((editorBuilder) => {
-      editorBuilder.replace(
-        new vscode.Range(
-          document.positionAt(0),
-          document.positionAt(document.getText().length),
-        ),
-        currentText,
-      );
-    });
-
-    const lastLine = document.lineCount - 1;
-    editor.revealRange(
-      new vscode.Range(
-        new vscode.Position(lastLine, 0),
-        new vscode.Position(lastLine, 0),
-      ),
-    );
-    // await sleep(2000);
-  });
-
-  response.data.on("end", () => {
-    vscode.window.showInformationMessage("Output completed.");
-  });
-
-  response.data.on("error", (error: Error) => {
-    vscode.window.showErrorMessage(`Something went wrong: ${error}`);
-  });
 };
 
 export interface ImportSymbol {
   name: string;
   position: vscode.Position;
   path: string;
+}
+
+export interface Import {
+  path: string;
+  code: string;
 }
 
 // Function to find the exact position of a symbol in a line
@@ -94,11 +35,13 @@ const findSymbolPosition = (
   }
   return new vscode.Position(lineNumber, symbolIndex);
 };
+
 const cleanUpPath = (str: string) => {
   return str.trim().slice(0, -1).split('"')[1];
 };
+
 export const findImportSymbols = async (document: vscode.TextDocument) => {
-  const text = document.getText();
+  //const text = document.getText();
   const importSymbols: ImportSymbol[] = [];
 
   // Process each line of the document
@@ -189,61 +132,4 @@ export const getDefinitionsOfImportSymbols = async (
     }),
   );
   return definitions;
-};
-
-export const writeOpenAIStreaming = async (stream: any, extension: string) => {
-  const document = await vscode.workspace.openTextDocument({
-    content: "",
-    language: convertExtensionToLanguage(extension),
-  });
-
-  const editor = await vscode.window.showTextDocument(document, {
-    preview: false,
-    viewColumn: vscode.ViewColumn.Beside,
-  });
-
-  let currentText = "";
-
-  for await (const part of stream) {
-    console.log(part);
-    const text = part.choices[0]?.delta?.content ?? "";
-    if (
-      text.includes("```") ||
-      text.includes("<|im_end|>") ||
-      text.includes(extension) ||
-      text.includes(convertExtensionToLanguage(extension))
-    ) {
-      return;
-    }
-    currentText += text;
-    await editor.edit((editorBuilder) => {
-      editorBuilder.replace(
-        new vscode.Range(
-          document.positionAt(0),
-          document.positionAt(document.getText().length),
-        ),
-        currentText,
-      );
-    });
-
-    const lastLine = document.lineCount - 1;
-    editor.revealRange(
-      new vscode.Range(
-        new vscode.Position(lastLine, 0),
-        new vscode.Position(lastLine, 0),
-      ),
-    );
-    // await sleep(2000);
-  }
-};
-
-export const removeDuplicates = (arr: Import[]) => {
-  const map = new Map<string, Import>();
-  arr.forEach((elem) => {
-    const doesExist = map.get(elem.path);
-    if (!doesExist) {
-      map.set(elem.path, elem);
-    }
-  });
-  return [...map.values()];
 };

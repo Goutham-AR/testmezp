@@ -16,7 +16,6 @@ export interface GeneratePromptData {
   testFramework: string;
   importedContent?: string;
   additionalInstructions?: string;
-  notJsx: boolean;
   projectInfoFile?: string;
   projectInfoFileName?: string;
 }

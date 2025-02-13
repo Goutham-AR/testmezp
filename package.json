@@ -16,18 +16,6 @@
       {
         "command": "testmezp.generateTestForFile",
         "title": "Testme: Generate tests for the file"
-      },
-      {
-        "command": "testmezp.generateTestForSelection",
-        "title": "Testme: Generate tests for selection"
-      },
-      {
-        "command": "testmezp.generateTestWithSample",
-        "title": "Testme: Generate tests for with sample"
-      },
-      {
-        "command": "testmezp.generateTestV3",
-        "title": "Testme: Generate tests V3"
       }
     ],
     "configuration": {
@@ -48,6 +36,14 @@
           ],
           "default": null,
           "description": "Model name"
+        },
+        "testme.contextLength": {
+          "type": [
+            "number",
+            null
+          ],
+          "default": null,
+          "description": "Model context"
         }
       }
     }
@@ -74,9 +70,10 @@
   "dependencies": {
     "@babel/parser": "^7.26.3",
     "@types/mustache": "^4.2.5",
+    "@vscode/vsce": "^3.2.2",
     "axios": "^1.7.9",
     "mustache": "^4.2.0",
-    "openai": "^4.78.1",
+    "ollama": "^0.5.13",
     "testme_core": "^0.0.3"
   }
 }
