@@ -20,7 +20,7 @@ export class App {
   private _apiUrl: string;
   private _modelName: string;
   private _ollama: Ollama;
-  private _contextLength: number = 10000;
+  private _contextLength: number = 30000;
 
   constructor() {
     const apiUrl = getConfig(CONFIG_NAMES.API_URL);
