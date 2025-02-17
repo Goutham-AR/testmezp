@@ -1,10 +1,15 @@
 import * as vscode from "vscode";
 import path from "path";
+import { encoding_for_model } from "@dqbd/tiktoken";
 import fs from "fs";
 import { AbortableAsyncIterator, ChatResponse, Ollama } from "ollama";
 import { CONFIG_NAMES, getConfig } from "./config";
 import { AppError, ConfigError } from "./errors";
-import { findImportSymbols, getDefinitionsOfImportSymbols, Import } from "./utils";
+import {
+  findImportSymbols,
+  getDefinitionsOfImportSymbols,
+  Import,
+} from "./utils";
 import {
   GeneratePromptData,
   loadGeneratePrompt,
@@ -69,7 +74,7 @@ export class App {
     }));
     const language = document.languageId;
     const importsPrompt = loadImportsText({ imports });
-    const promptData: GeneratePromptData = {
+    let promptData: GeneratePromptData = {
       language,
       sourceFileName: path.basename(filepath),
       sourceFileContent: sourceCode,
@@ -78,9 +83,20 @@ export class App {
       projectInfoFile: packageJsonContent,
       projectInfoFileName: "package.json",
     };
-    const prompt = loadGeneratePrompt(promptData);
+    let prompt = loadGeneratePrompt(promptData);
+    const tokenizer = encoding_for_model("gpt-3.5-turbo");
+    const encoding = tokenizer.encode(prompt);
+    if (encoding.length >= this._contextLength) {
+      console.log("context limit exceeded, reducing the size of prompt");
+      promptData.importedContent = undefined;
+      prompt = loadGeneratePrompt(promptData);
+    }
+    try {
     const response = await this._sendPromptStreaming(prompt);
     await this._writeStreamingOutput(response, language);
+    } catch (e) {
+      this._showError(`llm server request failed: ${(e as Error).message}`);
+    }
     //for await (const chunk of response) {
     //console.log(chunk.message.content);
     //}
@@ -145,14 +161,21 @@ export class App {
 
     let currentText = "";
 
+    let backtickCount = 0;
     for await (const chunk of response) {
       const text = chunk.message.content;
-      if (
-        text.includes("```") ||
-        text.includes("<|im_end|>") ||
-        text.includes(language)
-      )
+      if (text.includes("```")) {
+        backtickCount++;
         continue;
+      }
+
+      if (
+        text.includes(language) ||
+        backtickCount !== 0
+      ) {
+        continue;
+      }
+
       currentText += text;
       await editor.edit((editorBuilder) => {
         editorBuilder.replace(

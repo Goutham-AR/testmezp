@@ -69,6 +69,7 @@
   },
   "dependencies": {
     "@babel/parser": "^7.26.3",
+    "@dqbd/tiktoken": "^1.0.20",
     "@types/mustache": "^4.2.5",
     "mustache": "^4.2.0",
     "ollama": "^0.5.13"
