@@ -161,10 +161,11 @@ export class App {
 
     let currentText = "";
 
+    const languages = ["typescript", "javascript", "tsx", "jsx"];
     let insideBacktick = false;
     for await (const chunk of response) {
       const text = chunk.message.content;
-      if (text.includes("```")) {
+      if (text.includes("```") || text.includes("``")) {
         if (insideBacktick) {
           return;
         }
@@ -173,7 +174,7 @@ export class App {
       }
 
       if (
-        text.includes(language) || text.includes("typescript") ||
+        languages.some((val) => text.includes(val)) ||
         !insideBacktick
       ) {
         continue;
