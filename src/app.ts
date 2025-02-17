@@ -87,13 +87,16 @@ export class App {
     const tokenizer = encoding_for_model("gpt-3.5-turbo");
     const encoding = tokenizer.encode(prompt);
     if (encoding.length >= this._contextLength) {
-      console.log("context limit exceeded, reducing the size of prompt");
+      this._showWarning("context limit exceeded, removing imports from the prompt");
       promptData.importedContent = undefined;
       prompt = loadGeneratePrompt(promptData);
+      if (tokenizer.encode(prompt).length >= this._contextLength) {
+        this._showWarning("context exceeded, the response might be inaccurate");
+      }
     }
     try {
-    const response = await this._sendPromptStreaming(prompt);
-    await this._writeStreamingOutput(response, language);
+      const response = await this._sendPromptStreaming(prompt);
+      await this._writeStreamingOutput(response, language);
     } catch (e) {
       this._showError(`llm server request failed: ${(e as Error).message}`);
     }
@@ -107,6 +110,9 @@ export class App {
   }
   private _showInfo(message: string) {
     vscode.window.showInformationMessage(message);
+  }
+  private _showWarning(message: string) {
+    vscode.window.showWarningMessage(message);
   }
   private async _sendPrompt(prompt: string) {
     const response = await this._ollama.chat({
@@ -173,10 +179,7 @@ export class App {
         continue;
       }
 
-      if (
-        languages.some((val) => text.includes(val)) ||
-        !insideBacktick
-      ) {
+      if (languages.some((val) => text.includes(val)) || !insideBacktick) {
         continue;
       }
 
