@@ -161,17 +161,20 @@ export class App {
 
     let currentText = "";
 
-    let backtickCount = 0;
+    let insideBacktick = false;
     for await (const chunk of response) {
       const text = chunk.message.content;
       if (text.includes("```")) {
-        backtickCount++;
+        if (insideBacktick) {
+          return;
+        }
+        insideBacktick = !insideBacktick;
         continue;
       }
 
       if (
-        text.includes(language) ||
-        backtickCount !== 0
+        text.includes(language) || text.includes("typescript") ||
+        !insideBacktick
       ) {
         continue;
       }
