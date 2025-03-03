@@ -1,7 +1,7 @@
 import { App } from "./app";
 import { handleError } from "./errors";
 
-export async function generateTestForFileV2() {
+export async function generateTestForFile() {
   try {
     const app = new App();
     await app.generateTest();
@@ -9,4 +9,5 @@ export async function generateTestForFileV2() {
     handleError(e as Error);
   }
 };
+
 

@@ -1,5 +1,4 @@
 import Mustache from "mustache";
-import path from "path";
 import fs from "fs/promises";
 import { generate } from "./generate";
 import { importsPrompt } from "./imports";

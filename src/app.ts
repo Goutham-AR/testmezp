@@ -100,30 +100,20 @@ export class App {
     } catch (e) {
       this._showError(`llm server request failed: ${(e as Error).message}`);
     }
-    //for await (const chunk of response) {
-    //console.log(chunk.message.content);
-    //}
   }
 
   private _showError(message: string) {
     vscode.window.showErrorMessage(message);
   }
+
   private _showInfo(message: string) {
     vscode.window.showInformationMessage(message);
   }
+
   private _showWarning(message: string) {
     vscode.window.showWarningMessage(message);
   }
-  private async _sendPrompt(prompt: string) {
-    const response = await this._ollama.chat({
-      model: this._modelName,
-      messages: [this._getSystemMessage(), { role: "user", content: prompt }],
-      options: {
-        num_ctx: this._contextLength,
-      },
-    });
-    return response.message.content;
-  }
+
   private async _sendPromptStreaming(prompt: string) {
     const response = await this._ollama.chat({
       model: this._modelName,
