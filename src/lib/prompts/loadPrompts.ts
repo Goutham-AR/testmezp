@@ -2,6 +2,7 @@ import Mustache from "mustache";
 import fs from "fs/promises";
 import { generate } from "./generate";
 import { importsPrompt } from "./imports";
+import { generateWithSample } from "./generateWithSample";
 
 export async function readFile(filename: string) {
   const content = fs.readFile(filename, "utf-8");
@@ -17,6 +18,22 @@ export interface GeneratePromptData {
   additionalInstructions?: string;
   projectInfoFile?: string;
   projectInfoFileName?: string;
+}
+
+export interface GenerateWithSamplePromptData {
+  language: string;
+  sourceFileName: string;
+  sourceFileContent: string;
+  sampleSourceFileContent: string;
+  sampleTestFileContent: string;
+  testFramework: string;
+}
+
+export function loadGenerateWithSamplePrompt(
+  data: GenerateWithSamplePromptData,
+) {
+  const renderedContent = mustacheRenderString(generateWithSample, data);
+  return renderedContent;
 }
 
 export function loadGeneratePrompt(data: GeneratePromptData) {
