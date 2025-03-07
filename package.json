@@ -36,14 +36,6 @@
           ],
           "default": null,
           "description": "Model name"
-        },
-        "testme.contextLength": {
-          "type": [
-            "number",
-            null
-          ],
-          "default": null,
-          "description": "Model context"
         }
       }
     }

@@ -8,7 +8,7 @@ export abstract class IApp {
   protected _apiUrl: string;
   protected _modelName: string;
   protected _ollama: Ollama;
-  protected _contextLength: number = 30000;
+  protected _contextLength: number = 32768;
 
   constructor() {
     const apiUrl = getConfig(CONFIG_NAMES.API_URL);
@@ -19,10 +19,6 @@ export abstract class IApp {
     if (!modelName) {
       throw new ConfigError("error loading config", CONFIG_NAMES.MODEL_NAME);
     }
-    let contextLength = getConfig(CONFIG_NAMES.CONTEXT_LENGTH);
-    if (contextLength) {
-      this._contextLength = Number(contextLength);
-    }
     this._apiUrl = apiUrl;
     this._modelName = modelName;
     this._ollama = new Ollama({ host: apiUrl });
@@ -31,13 +27,12 @@ export abstract class IApp {
   abstract generateTest(): Promise<void>;
 
   protected async _sendPromptStreaming(prompt: string) {
-    const systemMessage = this._getSystemMessage();
-    console.log(systemMessage);
     const response = await this._ollama.chat({
       model: this._modelName,
       messages: [this._getSystemMessage(), this._getAssistantMessage(), { role: "user", content: prompt }],
       options: {
         num_ctx: this._contextLength,
+        temperature: 0.6,
       },
       stream: true,
     });
