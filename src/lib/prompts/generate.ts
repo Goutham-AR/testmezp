@@ -6,6 +6,9 @@ Additional guidelines:
 - Carefully analyze the provided code. Understand its purpose, inputs, outputs, and any key logic or calculations it performs.
 - Brainstorm a list of diverse and meaningful test cases you think will be necessary to fully validate the correctness and functionality of the code, and achieve 100% code coverage.
 - After each individual test has been added, review all tests to ensure they cover the full range of scenarios, including how to handle exceptions or errors.
+- You should always write the full tests with assertions.
+- Mock as much as possible.
+- Import the React component from './{{ sourceFileName }}' (Remove the .tsx in the import)
 
 ## Source File
 Here is the source file that you will be writing tests against, called '{{ sourceFileName }}'.
